@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
+</head>
+<body>
+<div style="margin-top: 50px;" class="ui container">
+    <h1 class="ui center aligned header">To Do App</h1>
+    <form method="post" class="ui form" action="/edit/{{ todo.id }}/">
+        {% csrf_token %}
+        <div class="field">
+            <label>
+                <input type="text" name="title" placeholder="Enter To Do Action" value="{{ todo.title }}">
+            </label><br>
+        </div>
+        <div class="field">
+            <label>
+                    <textarea name="description" placeholder="Enter Description" autocomplete="off" rows="4"
+                              cols="4"> {{ todo.description }}
+                    </textarea>
+            </label>
+        </div>
+        <button style="width: 100%" class="ui blue button" type="submit">Edit</button>
+    </form>
+    <h2 class="ui center aligned header">Create Subtasks</h2>
+    <form method="post" class="ui form" action="/create_subtask/{{ todo.id }}/">
+        {% csrf_token %}
+        <div class="field">
+            <label>
+                <input type="text" name="title" placeholder="Enter Subtask Action">
+            </label><br>
+        </div>
+    </form>
+    {% for subtask in subtasks %}
+        <div class="ui segment">
+            <form action="/finish_subtask/{{ subtask.id }}">
+                <div class="ui form">
+                    <div class="field">
+                        <div class="ui checkbox">
+                            {% if subtask.completed %}
+                                <input type="checkbox" name="file" checked onclick="this.form.submit()">
+                            {% else %}
+                                <input type="checkbox" name="file" onclick="this.form.submit()">
+                            {% endif %}
+                            <label class="label">{{ subtask.title }}
+                                <a href="/delete_subtask/{{ subtask.id }}">
+                                    <i class="trash red icon"></i>
+                                </a>
+                                </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    {% endfor %}
+    <a class="ui black button" href="/"> Get Back</a>
+
+</div>
+
+</body>
+</html>

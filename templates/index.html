@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <style>
+        .custom-button {
+            width: 100%;
+        }
+
+        .disabled {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div style="margin-top: 50px;" class="ui container">
+    <h1 class="ui center aligned header">To Do App</h1>
+    <form method="post" class="ui form" action="/add/">
+        {% csrf_token %}
+        <div class="field">
+            <label>
+                <input type="text" name="title" placeholder="Enter To Do Action">
+            </label><br>
+        </div>
+        <div class="field">
+            <label>
+                    <textarea name="description" placeholder="Enter Description" autocomplete="off" rows="4" cols="4">
+                    </textarea>
+            </label>
+        </div>
+        <button class="ui blue button custom-button" type="submit">Add</button>
+    </form>
+    {% for todo in to_do %}
+        <div class="ui segment">
+            {% if todo.completed == False %}
+                <h2 class="ui big header" style="color: black"> {{ todo.title }}</h2>
+                {% if subtasks %}
+                    <h4 class="ui">{{ subtasks|length }} unfinished subtasks</h4>
+                    <ul>
+                        {% for subtask in subtasks|slice:"0:2" %}
+                            <li>{{ subtask.title }}</li>
+                        {% endfor %}
+                    </ul>
+                                        {% if subtasks|length > 2 %}
+                                            <pre>Click on Edit to see the rest of subtasks</pre>
+                    {% endif %}
+                {% endif %}
+                <a class="ui green button" href="/finish/{{ todo.id }}">Finish</a>
+                <a class="ui gray button" href="/edit_view/{{ todo.id }}">Edit</a>
+
+            {% else %}
+                <h2 class="ui big header"><strike>{{ todo.title }}</strike></h2>
+                <a class="ui blue button" href="/finish/{{ todo.id }}">UnDo</a>
+                <a class="ui gray button disabled" href="/edit_view/{{ todo.id }}">Edit</a>
+
+            {% endif %}
+            <a class="ui red button" href="/delete/{{ todo.id }}">Delete</a>
+        </div>
+    {% endfor %}
+    <!--    Display Errors-->
+    {% if error %}
+        <div class="ui error message">
+            <div class="header">
+                {{ error }}
+            </div>
+        </div>
+    {% endif %}
+    <br>
+    <a class="ui red button" href="/delete_all/" style="width: 100%">Delete All</a>
+    <br><br><br>
+</div>
+</body>
+</html>
